@@ -1,8 +1,9 @@
-import React, { ReactPropTypes } from "react";
+import React from "react";
 
 import CommentsPage from "./comments/page";
 
-const Home: React.FC<ReactPropTypes> = () => {
+const Home: React.FC<{}> = () => {
   return <CommentsPage />;
 };
+
 export default Home;

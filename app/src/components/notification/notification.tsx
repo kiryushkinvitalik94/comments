@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NotificationTypesKeys, NotificationTypes } from "src/types";
 
-type NotificationStateType = {
+export type NotificationStateType = {
   message: string;
   type: NotificationTypesKeys;
 };

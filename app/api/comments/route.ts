@@ -1,8 +1,7 @@
 // pages/api/comments.ts
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import { CommentModel } from "src/models/comments.model";
+import { getComments, writeComments } from "data/comments.model";
+
 import {
   serverErrorResponse,
   getFieldIsReqired,
@@ -16,30 +15,12 @@ import {
   commentDeleteSuccessText,
 } from "./comments.constants";
 
-const COMMENTS_FILE_PATH = path.join(
-  process.cwd(),
-  "/app/data",
-  "comments.json"
-);
-
-function readCommentsFile() {
-  const commentsData = fs.readFileSync(COMMENTS_FILE_PATH, "utf-8");
-  return JSON.parse(commentsData) as CommentModel[];
-}
-
-function writeCommentsFile(comments: CommentModel[]) {
-  fs.writeFileSync(
-    COMMENTS_FILE_PATH,
-    JSON.stringify(comments, null, 2),
-    "utf-8"
-  );
-}
-
 export async function GET(request: NextRequest) {
   try {
-    const comments = readCommentsFile();
+    const comments = getComments();
     return NextResponse.json(comments, { status: 200 });
   } catch (error) {
+    console.error(error);
     return serverErrorResponse();
   }
 }
@@ -52,7 +33,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const comments = readCommentsFile();
+    const comments = getComments();
 
     if (comments.some((comment) => comment.text === text)) {
       return failedResponse(commentExistErrorText, 400);
@@ -65,9 +46,10 @@ export async function POST(request: NextRequest) {
 
     comments.push(newComment);
 
-    writeCommentsFile(comments);
+    writeComments(comments);
     return NextResponse.json(newComment, { status: 201 });
   } catch (error) {
+    console.error(error);
     return serverErrorResponse();
   }
 }
@@ -81,16 +63,17 @@ export async function PUT(request: NextRequest) {
     return failedResponse(getFieldIsReqired("Comment id"), 400);
   }
   try {
-    const comments = readCommentsFile();
+    const comments = getComments();
     const commentToUpdate = comments.find((comment) => comment.id === id);
     if (commentToUpdate) {
       commentToUpdate.text = text;
-      writeCommentsFile(comments);
+      writeComments(comments);
       return NextResponse.json(commentToUpdate, { status: 200 });
     } else {
       return failedResponse(commentNotFoundErrorText, 400);
     }
-  } catch {
+  } catch (error) {
+    console.error(error);
     return serverErrorResponse(updatingCommentErrorText);
   }
 }
@@ -103,7 +86,7 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const comments = readCommentsFile();
+    const comments = getComments();
     const commentIndex = comments.findIndex((comment) => comment.id === id);
 
     if (commentIndex === -1) {
@@ -112,13 +95,14 @@ export async function DELETE(request: NextRequest) {
 
     comments.splice(commentIndex, 1);
 
-    writeCommentsFile(comments);
+    writeComments(comments);
 
     return NextResponse.json(
       { message: commentDeleteSuccessText },
       { status: 200 }
     );
   } catch (error) {
+    console.error(error);
     return serverErrorResponse();
   }
 }
