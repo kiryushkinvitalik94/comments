@@ -1,4 +1,3 @@
-// pages/api/comments.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getComments, writeComments } from "data/comments.model";
 
