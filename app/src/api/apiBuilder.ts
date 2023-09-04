@@ -51,11 +51,11 @@ export default class ApiBuilder implements Api {
     };
   }
   delete<requestDataType, ReturnData>(path) {
-    return async (requestData: requestDataType): Promise<ReturnData> => {
+    return async (id: requestDataType): Promise<ReturnData> => {
+      const requestPath = `${path}${id ? `/${id}` : ""}`;
       try {
-        const response = await fetch(path, {
+        const response = await fetch(requestPath, {
           method: "DELETE",
-          body: JSON.stringify(requestData),
         });
 
         if (!response.ok) {
@@ -64,7 +64,7 @@ export default class ApiBuilder implements Api {
         }
 
         // After deleting a comment, remove the cached data for this path
-        this.cache.delete(path);
+        this.cache.delete(requestPath);
 
         const data = await response.json();
         return data;
@@ -74,9 +74,13 @@ export default class ApiBuilder implements Api {
     };
   }
   put<requestDataType, ReturnData>(path) {
-    return async (requestData: requestDataType): Promise<ReturnData> => {
+    return async (
+      requestData: requestDataType,
+      id?: number
+    ): Promise<ReturnData> => {
+      const requestPath = `${path}${id ? `/${id}` : ""}`;
       try {
-        const response = await fetch(path, {
+        const response = await fetch(requestPath, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -90,7 +94,7 @@ export default class ApiBuilder implements Api {
         }
 
         // After updating a comment, remove the cached data for this path
-        this.cache.delete(path);
+        this.cache.delete(requestPath);
 
         const data = await response.json();
         return data;

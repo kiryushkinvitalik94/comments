@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { CommentModel } from "src/models/comments.model";
 import CommentItem from "./comment-item";

@@ -57,7 +57,7 @@ const CommentsPage: React.FC<CommentsPagePropsType> = ({}) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await deleteCommentHttpRequest({ id: commentId });
+      await deleteCommentHttpRequest(commentId);
       setComments((prevComments) =>
         prevComments.filter((comment: CommentModel) => comment.id !== commentId)
       );

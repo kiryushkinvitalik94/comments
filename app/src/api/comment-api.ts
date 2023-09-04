@@ -16,10 +16,9 @@ export const addCommentHttpRequest = apiBuilder.post<
   CommentModel
 >("/api/comments");
 
-export const deleteCommentHttpRequest = apiBuilder.delete<
-  DeleteCommentRequestType,
-  void
->("/api/comments");
+export const deleteCommentHttpRequest = apiBuilder.delete<number, void>(
+  "/api/comments"
+);
 
 export const updateCommentHttpRequest = apiBuilder.put<
   CommentModel,
